@@ -189,8 +189,8 @@ graph LR;
 
     classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
 
-    classDef vlan-default fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
-    class br-ex,physnet-ex,node1-bond0 vlan-default
+    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    class br-ex,physnet-ex,node1-bond0 bond0
 
     classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata,node1-bond1 bond1
@@ -283,7 +283,7 @@ graph LR;
     classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata bond1
 
-    classDef labels stroke-width:1px,color:#000,fill:#fff;
+    classDef labels stroke-width:0px,color:#fff,fill:#1B0D33;
     classDef networks fill:#cdd,stroke-width:0px;
 
     style udn-controller fill:#ddd,stroke:#000,stroke-width:1px;
@@ -357,16 +357,14 @@ graph LR;
     Internet["☁️ "]:::Internet
     br-vmdata ==> Internet
 
-
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px;
-    class node1-eth0 node-eth;
-
     classDef vm-eth fill:#00ffff,color:#00f,stroke:#444,stroke-width:1px;
     class client-eth0,ldap-eth0,nfs-eth0 vm-eth;
 
-    classDef vlan-1924 fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px;
+    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    class nad-1924-client,nad-1924-ldap,nad-1924-nfs,br-vmdata,physnet-vmdata bond1
+    class client-eth0,ldap-eth0,nfs-eth0 bond1
 
-    classDef labels stroke-width:1px,color:#fff,fill:#005577;
+    classDef labels stroke-width:0px,color:#fff,fill:#1B0D33;
     class label-client,label-ldap,label-nfs labels;
 
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px;
@@ -383,12 +381,13 @@ graph LR;
     class ns-nfs,ns-client,ns-ldap namespace;
 
     classDef nad-1924 fill:#00ffff,color:#00f,stroke:#333,stroke-width:1px;
-    class nad-1924-client,nad-1924-ldap,nad-1924-nfs nad-1924;
 ```
 
 ### VLAN Guest Tagging
 
 Trunking 802.1Q to virtual machines, commonly known as VGT, is not yet supported by OVN and requires Linux Bridge on a dedicate host interface.
+
+Before User Defined Networks API was creating, you were responsible for generating a Network Attached Definition. Because UDN does not support Linux bridges, you must manually create a NAD for this use case.
 
 ```mermaid
 graph LR;
@@ -429,13 +428,14 @@ graph LR;
     node1-bond1 ==(🏷️ 802.1q trunk)==> Internet
     node1-bond2 ==(🏷️ 802.1q trunk)==> Internet
 
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
+    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    class br-ex,physnet-ex,node1-bond0 bond0
 
-    classDef vlan-default fill:#00aadd,color:#00f,stroke:#333,stroke-width:2px
-    class br-ex,physnet-ex,node1-bond0 vlan-default
+    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    class br-vmdata,physnet-vmdata,node1-bond1 bond1
 
-    classDef vlan-1924 fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
-    class br-vmdata,physnet-vmdata vlan-1924
+    classDef bond2 fill:#daf2f2,color:#004d4d,stroke:#333,stroke-width:2px
+    class nad-vgt-client,vgt-client-eth0,br-linux,node1-bond2 bond2
 
     classDef labels stroke-width:1px,color:#fff,fill:#005577
     classDef networks fill:#cdd,stroke-width:0px
@@ -446,12 +446,6 @@ graph LR;
 
     classDef nodes fill:#fff,stroke:#000,stroke-width:3px
     class node1,node2,node3 nodes
-
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
-    class node1-bond1 node-eth
-
-    classDef nad-vgt fill:#00ffff,color:#00f,stroke:#333,stroke-width:1px
-    class nad-vgt-client,vgt-client-eth0,node1-bond2,br-linux nad-vgt
 
     classDef vm color:#000,fill:#eee,stroke:#000,stroke-width:2px
     class vm-client,vm-ldap,vm-nfs vm
