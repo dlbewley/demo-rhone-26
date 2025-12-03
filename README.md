@@ -46,7 +46,8 @@ graph LR;
 
     classDef node-eth fill:#37A3A3,color:#00f,stroke:#333,stroke-width:2px
 
-    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef xbond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond0 fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
     class br-ex,physnet-ex,node1-vlan-machine,node1-bond0 bond0
 
     style Localnets fill:#fff,stroke:#000,stroke-width:1px
@@ -87,10 +88,12 @@ graph LR;
     Internet["☁️ "]:::Internet
     node1-bond0 ==(🏷️ 802.1q trunk)==> Internet
 
-    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef xbond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond0 fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
     class br-ex,physnet-ex,node1-vlan-machine,node1-bond0 bond0
 
-    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef xbond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond1 fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata bond1
 
     style Localnets fill:#fff,stroke:#000,stroke-width:1px
@@ -304,7 +307,7 @@ graph LR;
 
 The UDN Controller will ensure that any namespace identified by the CUDN selector has a `NetworkAttachmentDefinition` created within it. This NAD will be used to create a port on the vswitch for the virtual machine NICs to attach to.
 
-Workloads can now reference the NAD in the local namespace to attached to the VLAN 1924.
+Workloads can now reference the NAD in the local namespace to attached to the VLAN 1924.t
 
 ```mermaid
 graph LR;
