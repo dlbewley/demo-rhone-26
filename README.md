@@ -278,12 +278,10 @@ graph LR;
     Internet["☁️ "]:::Internet
     br-vmdata ==> Internet
 
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px;
-
     classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata bond1
 
-    classDef labels stroke-width:0px,color:#fff,fill:#1B0D33;
+    classDef labels stroke-width:1px,stroke:#9ad8d8,color:#00d4d4,fill:#daf2f2;
     classDef networks fill:#cdd,stroke-width:0px;
 
     style udn-controller fill:#ddd,stroke:#000,stroke-width:1px;
@@ -298,7 +296,7 @@ graph LR;
     classDef namespace color:#000,fill:#fff,stroke:#000,stroke-width:2px;
     class ns-nfs,ns-client,ns-ldap namespace;
 
-    classDef nad-1924 fill:#37a3a3,color:#00f,stroke:#333,stroke-width:1px;
+    classDef nad-1924 fill:#37a3a3,color:#004d4d,stroke:#333,stroke-width:1px;
     class nad-1924-client,nad-1924-ldap,nad-1924-nfs,udn-localnet-1924 nad-1924;
 ```
 
@@ -348,8 +346,8 @@ graph LR;
 
 
     nad-1924-client --> br-vmdata
-    nad-1924-ldap --> br-vmdata
-    nad-1924-nfs --> br-vmdata
+    nad-1924-ldap   --> br-vmdata
+    nad-1924-nfs    --> br-vmdata
 
 
     linkStyle 0,1,2,3,4,5 stroke:#00dddd,stroke-width:2px;
