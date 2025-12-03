@@ -61,7 +61,7 @@ graph LR;
 
 Example with Machine Network on a tagged VLAN.
 
-If the machine network is using a VLAN interface then no tags will be visibible on br-ex. A second bridge `br-vmdata` should be attached at `bond0` where all VLAN tags will remain visible.
+If the machine network is using a VLAN interface then no tags will be visible on `br-ex`. A second bridge `br-vmdata` should be attached at `bond0` where all VLAN tags will remain visible.
 
 ```mermaid
 graph LR;
@@ -80,7 +80,7 @@ graph LR;
     end
 
     physnet-ex -- maps to --> br-ex
-    physnet-vmdata -- maps to --> br-vmdata
+    physnet-vmdata --> br-vmdata
     br-ex --> node1-vlan-machine --> node1-bond0
     br-vmdata --> node1-bond0
 
@@ -124,7 +124,7 @@ graph LR;
     end
 
     physnet-ex -- maps to --> br-ex
-    physnet-vmdata -- maps to --> br-vmdata
+    physnet-vmdata --> br-vmdata
     br-ex --> node1-bond0
     br-vmdata --> node1-bond1
 
@@ -177,7 +177,7 @@ graph LR;
     end
 
     physnet-ex -- maps to --> br-ex
-    physnet-vmdata -- maps to --> br-vmdata
+    physnet-vmdata --> br-vmdata
     br-ex --> node1-bond0
     br-vmdata --> node1-bond1
     br-linux --> node1-bond2
@@ -258,14 +258,14 @@ graph LR;
     end
 
     udn-localnet-1924 -. selects .-> ns-client
-    udn-localnet-1924 -. selects .-> ns-ldap
-    udn-localnet-1924 -. selects .-> ns-nfs
+    udn-localnet-1924 -.-> ns-ldap
+    udn-localnet-1924 -.-> ns-nfs
 
     linkStyle 0,1,2 stroke:#007799,stroke-width:2px;
 
-    udn-controller --creates--> nad-1924-nfs
-    udn-controller --creates--> nad-1924-ldap
     udn-controller --creates--> nad-1924-client
+    udn-controller ---> nad-1924-nfs
+    udn-controller ---> nad-1924-ldap
 
     linkStyle 3,4,5 stroke:#00dddd,stroke-width:2px;
 
@@ -362,7 +362,8 @@ graph LR;
     class nad-1924-client,nad-1924-ldap,nad-1924-nfs,br-vmdata,physnet-vmdata bond1
     class client-eth0,ldap-eth0,nfs-eth0 bond1
 
-    classDef labels stroke-width:0px,color:#fff,fill:#1B0D33;
+    classDef xlabels stroke-width:0px,color:#fff,fill:#1B0D33;
+    classDef labels stroke-width:1px,stroke:#9ad8d8,color:#00d4d4,fill:#daf2f2;
     class label-client,label-ldap,label-nfs labels;
 
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px;
@@ -413,7 +414,7 @@ graph LR;
     end
 
     physnet-ex -- maps to --> br-ex
-    physnet-vmdata -- maps to --> br-vmdata
+    physnet-vmdata --> br-vmdata
     br-ex --> node1-bond0
     br-vmdata --> node1-bond1
     br-linux --> node1-bond2
