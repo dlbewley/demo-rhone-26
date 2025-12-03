@@ -304,6 +304,8 @@ graph LR;
 
 The UDN Controller will ensure that any namespace identified by the CUDN selector has a `NetworkAttachmentDefinition` created within it. This NAD will be used to create a port on the vswitch for the virtual machine NICs to attach to.
 
+Workloads can now reference the NAD in the local namespace to attached to the VLAN 1924.
+
 ```mermaid
 graph LR;
     subgraph Cluster[" "]
