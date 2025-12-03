@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: openshift-gitops
+
+labels:
+  - includeSelectors: true
+    pairs:
+      demo: autofs-networking
+      app.kubernetes.io/instance: demo-autofs-networking
+
+components:
+  - ../../components/argocd-net-management
+  # add node selector in overlay
+  - ../../components/physnet-mapping
+  # add appropriate localnets in overlay
+  # - ../../components/localnet-1924
