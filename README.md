@@ -21,14 +21,13 @@ An OVS bridge `br-ex` will be attached to this default interface and it will tak
 
 #### Machine Net on Native VLAN
 
-Example with Machine Network on the native VLAN of the trunk feeding bond0.
+Example with Machine Network on the native VLAN of the trunk feeding `bond0`.
 
-In the simplest case the node is installed with its IP address directly on the bond0 interface.
+In the simplest case the node is installed with its IP address directly on the `bond0` interface.
 
 ```mermaid
 graph LR;
     subgraph Cluster[" "]
-
       subgraph Localnets["Physnet Mappings"]
         physnet-ex[Localnet<br> 🧭 physnet]
       end
@@ -47,14 +46,8 @@ graph LR;
 
     classDef node-eth fill:#37A3A3,color:#00f,stroke:#333,stroke-width:2px
 
-    classDef vlan-default fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
-    class br-ex,physnet-ex,node1-vlan-machine,node1-bond0 vlan-default
-
-    classDef vmdata fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
-    class node1-vlan1924,br-vmdata,physnet-vmdata vmdata
-
-    classDef labels stroke-width:1px,color:#fff,fill:#005577
-    classDef networks fill:#cdd,stroke-width:0px
+    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    class br-ex,physnet-ex,node1-vlan-machine,node1-bond0 bond0
 
     style Localnets fill:#fff,stroke:#000,stroke-width:1px
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
@@ -62,24 +55,17 @@ graph LR;
 
     classDef nodes fill:#fff,stroke:#000,stroke-width:3px
     class node1,node2,node3 nodes
-
-    classDef node-eth fill:#37A3A3,color:#00f,stroke:#333,stroke-width:2px
-    class node1-bond1 node-eth
-
-    classDef nad-1924 fill:#37A3A3,color:#00f,stroke:#333,stroke-width:1px
-    class nad-1924-client,nad-1924-ldap,nad-1924-nfs nad-1924
 ```
 
 #### Machine Net on Tagged  VLAN
 
 Example with Machine Network on a tagged VLAN.
 
-If the machine network is using a VLAN interface then no tags will be visibible on br-ex. A second bridge `br-vmdata` should be attached at `bond0` where all VLAN tags will remain visible.
+If the machine network is using a VLAN interface then no tags will be visible on `br-ex`. A second bridge `br-vmdata` should be attached at `bond0` where all VLAN tags will remain visible.
 
 ```mermaid
 graph LR;
     subgraph Cluster[" "]
-
       subgraph Localnets["Physnet Mappings"]
         physnet-ex[Localnet<br> 🧭 physnet]
         physnet-vmdata[Localnet<br> 🧭 physnet-vmdata]
@@ -94,24 +80,18 @@ graph LR;
     end
 
     physnet-ex -- maps to --> br-ex
-    physnet-vmdata -- maps to --> br-vmdata
+    physnet-vmdata --> br-vmdata
     br-ex --> node1-vlan-machine --> node1-bond0
     br-vmdata --> node1-bond0
 
     Internet["☁️ "]:::Internet
     node1-bond0 ==(🏷️ 802.1q trunk)==> Internet
 
-    classDef node-eth fill:#37A3A3,color:#00f,stroke:#333,stroke-width:2px
-
-    classDef vlan-default fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
-    class br-ex,physnet-ex,node1-vlan-machine,node1-bond0 vlan-default
+    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    class br-ex,physnet-ex,node1-vlan-machine,node1-bond0 bond0
 
     classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata bond1
-
-
-    classDef labels stroke-width:1px,color:#fff,fill:#005577
-    classDef networks fill:#cdd,stroke-width:0px
 
     style Localnets fill:#fff,stroke:#000,stroke-width:1px
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
@@ -119,12 +99,6 @@ graph LR;
 
     classDef nodes fill:#fff,stroke:#000,stroke-width:3px
     class node1,node2,node3 nodes
-
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
-    class node1-bond1 node-eth
-
-    classDef nad-1924 fill:#00ffff,color:#00f,stroke:#333,stroke-width:1px
-    class nad-1924-client,nad-1924-ldap,nad-1924-nfs nad-1924
 ```
 
 ### Node Example: 2 Interfaces (4 NICs in 2 bonds)
@@ -150,15 +124,13 @@ graph LR;
     end
 
     physnet-ex -- maps to --> br-ex
-    physnet-vmdata -- maps to --> br-vmdata
+    physnet-vmdata --> br-vmdata
     br-ex --> node1-bond0
     br-vmdata --> node1-bond1
 
     Internet["☁️ "]:::Internet
     node1-bond0 ==default gw==> Internet
     node1-bond1 ==(🏷️ 802.1q trunk)==> Internet
-
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
 
     classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
     class br-ex,physnet-ex,node1-bond0 bond0
@@ -205,7 +177,7 @@ graph LR;
     end
 
     physnet-ex -- maps to --> br-ex
-    physnet-vmdata -- maps to --> br-vmdata
+    physnet-vmdata --> br-vmdata
     br-ex --> node1-bond0
     br-vmdata --> node1-bond1
     br-linux --> node1-bond2
@@ -217,8 +189,8 @@ graph LR;
 
     classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
 
-    classDef vlan-default fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
-    class br-ex,physnet-ex,node1-bond0 vlan-default
+    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    class br-ex,physnet-ex,node1-bond0 bond0
 
     classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata,node1-bond1 bond1
@@ -242,9 +214,11 @@ graph LR;
 
 ## Logical Network Configuration
 
-Logical networks in OVN Kuberentes may be defined using 3 options for their topology type. Access to a physical VLAN is via a logical network of 'localnet' topology.
+Logical networks are managed by the User Defined Network resource. If a logical network should be usable by more than one namespace, then a Cluster User Defined Network resource should be used instead.
 
-Workloads access Ogical networks by way of Network Attachment Definitions. Network attachment definitions are namespace scoped and this enables them to be shared or isolated among tenants.
+Logical networks in OVN Kuberntes may be defined with one of 3 topology types. Access to a physical VLAN is via a logical network of 'localnet' topology.
+
+Workloads access Logical networks by way of Network Attachment Definitions. Network attachment definitions are namespace scoped and this enables them to be shared or isolated among tenants.
 
 Network attachment definitions in the 'default' namespace are available for use by workloads in all namespaces.
 
@@ -284,14 +258,14 @@ graph LR;
     end
 
     udn-localnet-1924 -. selects .-> ns-client
-    udn-localnet-1924 -. selects .-> ns-ldap
-    udn-localnet-1924 -. selects .-> ns-nfs
+    udn-localnet-1924 -.-> ns-ldap
+    udn-localnet-1924 -.-> ns-nfs
 
     linkStyle 0,1,2 stroke:#007799,stroke-width:2px;
 
-    udn-controller --creates--> nad-1924-nfs
-    udn-controller --creates--> nad-1924-ldap
     udn-controller --creates--> nad-1924-client
+    udn-controller ---> nad-1924-nfs
+    udn-controller ---> nad-1924-ldap
 
     linkStyle 3,4,5 stroke:#00dddd,stroke-width:2px;
 
@@ -304,18 +278,13 @@ graph LR;
     Internet["☁️ "]:::Internet
     br-vmdata ==> Internet
 
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px;
-
     classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata bond1
 
-    classDef vlan-1924 fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px;
-    classDef udn-localnet-1924 fill:#00ffff,color:#00f,stroke:#333,stroke-width:2px;
-
-    classDef labels stroke-width:1px,color:#fff,fill:#005577;
+    classDef labels stroke-width:1px,stroke:#9ad8d8,color:#00d4d4,fill:#daf2f2;
     classDef networks fill:#cdd,stroke-width:0px;
 
-    style udn-controller fill:#fff,stroke:#000,stroke-width:1px;
+    style udn-controller fill:#ddd,stroke:#000,stroke-width:1px;
     style node1 fill:#fff,stroke:#000,stroke-width:3px;
     style Localnets fill:#fff,stroke:#000,stroke-width:1px;
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px;
@@ -327,13 +296,15 @@ graph LR;
     classDef namespace color:#000,fill:#fff,stroke:#000,stroke-width:2px;
     class ns-nfs,ns-client,ns-ldap namespace;
 
-    classDef nad-1924 fill:#00ffff,color:#00f,stroke:#333,stroke-width:1px;
-    class nad-1924-client,nad-1924-ldap,nad-1924-nfs nad-1924;
+    classDef nad-1924 fill:#37a3a3,color:#004d4d,stroke:#333,stroke-width:1px;
+    class nad-1924-client,nad-1924-ldap,nad-1924-nfs,udn-localnet-1924 nad-1924;
 ```
 
 ## VM Connectivity
 
 The UDN Controller will ensure that any namespace identified by the CUDN selector has a `NetworkAttachmentDefinition` created within it. This NAD will be used to create a port on the vswitch for the virtual machine NICs to attach to.
+
+Workloads can now reference the NAD in the local namespace to attached to the VLAN 1924.
 
 ```mermaid
 graph LR;
@@ -377,8 +348,8 @@ graph LR;
 
 
     nad-1924-client --> br-vmdata
-    nad-1924-ldap --> br-vmdata
-    nad-1924-nfs --> br-vmdata
+    nad-1924-ldap   --> br-vmdata
+    nad-1924-nfs    --> br-vmdata
 
 
     linkStyle 0,1,2,3,4,5 stroke:#00dddd,stroke-width:2px;
@@ -386,16 +357,15 @@ graph LR;
     Internet["☁️ "]:::Internet
     br-vmdata ==> Internet
 
-
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px;
-    class node1-eth0 node-eth;
-
     classDef vm-eth fill:#00ffff,color:#00f,stroke:#444,stroke-width:1px;
     class client-eth0,ldap-eth0,nfs-eth0 vm-eth;
 
-    classDef vlan-1924 fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px;
+    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    class nad-1924-client,nad-1924-ldap,nad-1924-nfs,br-vmdata,physnet-vmdata bond1
+    class client-eth0,ldap-eth0,nfs-eth0 bond1
 
-    classDef labels stroke-width:1px,color:#fff,fill:#005577;
+    classDef xlabels stroke-width:0px,color:#fff,fill:#1B0D33;
+    classDef labels stroke-width:1px,stroke:#9ad8d8,color:#00d4d4,fill:#daf2f2;
     class label-client,label-ldap,label-nfs labels;
 
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px;
@@ -412,12 +382,13 @@ graph LR;
     class ns-nfs,ns-client,ns-ldap namespace;
 
     classDef nad-1924 fill:#00ffff,color:#00f,stroke:#333,stroke-width:1px;
-    class nad-1924-client,nad-1924-ldap,nad-1924-nfs nad-1924;
 ```
 
 ### VLAN Guest Tagging
 
 Trunking 802.1Q to virtual machines, commonly known as VGT, is not yet supported by OVN and requires Linux Bridge on a dedicate host interface.
+
+Before User Defined Networks API was creating, you were responsible for generating a Network Attached Definition. Because UDN does not support Linux bridges, you must manually create a NAD for this use case.
 
 ```mermaid
 graph LR;
@@ -445,7 +416,7 @@ graph LR;
     end
 
     physnet-ex -- maps to --> br-ex
-    physnet-vmdata -- maps to --> br-vmdata
+    physnet-vmdata --> br-vmdata
     br-ex --> node1-bond0
     br-vmdata --> node1-bond1
     br-linux --> node1-bond2
@@ -458,13 +429,14 @@ graph LR;
     node1-bond1 ==(🏷️ 802.1q trunk)==> Internet
     node1-bond2 ==(🏷️ 802.1q trunk)==> Internet
 
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
+    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    class br-ex,physnet-ex,node1-bond0 bond0
 
-    classDef vlan-default fill:#00aadd,color:#00f,stroke:#333,stroke-width:2px
-    class br-ex,physnet-ex,node1-bond0 vlan-default
+    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    class br-vmdata,physnet-vmdata,node1-bond1 bond1
 
-    classDef vlan-1924 fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
-    class br-vmdata,physnet-vmdata vlan-1924
+    classDef bond2 fill:#daf2f2,color:#004d4d,stroke:#333,stroke-width:2px
+    class nad-vgt-client,vgt-client-eth0,br-linux,node1-bond2 bond2
 
     classDef labels stroke-width:1px,color:#fff,fill:#005577
     classDef networks fill:#cdd,stroke-width:0px
@@ -475,12 +447,6 @@ graph LR;
 
     classDef nodes fill:#fff,stroke:#000,stroke-width:3px
     class node1,node2,node3 nodes
-
-    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
-    class node1-bond1 node-eth
-
-    classDef nad-vgt fill:#00ffff,color:#00f,stroke:#333,stroke-width:1px
-    class nad-vgt-client,vgt-client-eth0,node1-bond2,br-linux nad-vgt
 
     classDef vm color:#000,fill:#eee,stroke:#000,stroke-width:2px
     class vm-client,vm-ldap,vm-nfs vm
