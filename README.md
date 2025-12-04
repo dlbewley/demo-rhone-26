@@ -10,7 +10,9 @@ The number of interfaces may have an effect on how physical networks may be acce
 
 Below are some typical example configurations.
 
-### Node Example: 1 Interface (2 NICs in a bond)
+### Node Example: 1 Interface
+
+> Node with single NIC or 2 NICs in 1 bond
 
 If multiple VLANs are trunked to `bond0`, a VLAN interface would be created at install time for the machine network or the native VLAN can be used if it exists.
 
@@ -46,10 +48,11 @@ graph LR;
 
     classDef node-eth fill:#37A3A3,color:#00f,stroke:#333,stroke-width:2px
 
-    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef xbond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond0 fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
     class br-ex,physnet-ex,node1-vlan-machine,node1-bond0 bond0
 
-    style Localnets fill:#fff,stroke:#000,stroke-width:1px
+    style Localnets fill:#fff,color:#aaa,stroke:#000,stroke-width:1px
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
     style Internet fill:none,stroke-width:0px,font-size:+2em
 
@@ -75,7 +78,7 @@ graph LR;
         br-ex[ OVS Bridge<br> 🔗 br-ex]
         br-vmdata[ OVS Bridge<br> 🔗 br-vmdata]
         node1-bond0[bond0 🔌]
-        node1-vlan-machine[VLAN Int<br> bond0.123 🔌]
+        node1-vlan-machine[VLAN Int<br> bond0.123 🏷️]
       end
     end
 
@@ -87,13 +90,13 @@ graph LR;
     Internet["☁️ "]:::Internet
     node1-bond0 ==(🏷️ 802.1q trunk)==> Internet
 
-    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond0 fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
     class br-ex,physnet-ex,node1-vlan-machine,node1-bond0 bond0
 
-    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond1 fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata bond1
 
-    style Localnets fill:#fff,stroke:#000,stroke-width:1px
+    style Localnets fill:#fff,color:#aaa,stroke:#000,stroke-width:1px
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
     style Internet fill:none,stroke-width:0px,font-size:+2em
 
@@ -101,7 +104,9 @@ graph LR;
     class node1,node2,node3 nodes
 ```
 
-### Node Example: 2 Interfaces (4 NICs in 2 bonds)
+### Node Example: 2 Interfaces
+
+> Node with two NICs or 4 NICs in 2 bonds
 
 The first two interfaces are bound into `bond0`. There is only a native VLAN on this bond.
 The second two interfaces are bound into `bond1` which recieve multiple VLAN tags from the switch.
@@ -132,16 +137,16 @@ graph LR;
     node1-bond0 ==default gw==> Internet
     node1-bond1 ==(🏷️ 802.1q trunk)==> Internet
 
-    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond0 fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
     class br-ex,physnet-ex,node1-bond0 bond0
 
-    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond1 fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata,node1-bond1 bond1
 
     classDef labels stroke-width:1px,color:#fff,fill:#005577
     classDef networks fill:#cdd,stroke-width:0px
 
-    style Localnets fill:#fff,stroke:#000,stroke-width:1px
+    style Localnets fill:#fff,color:#aaa,stroke:#000,stroke-width:1px
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
     style Internet fill:none,stroke-width:0px,font-size:+2em
 
@@ -151,7 +156,10 @@ graph LR;
     classDef nad-1924 fill:#00ffff,color:#00f,stroke:#333,stroke-width:1px
     class nad-1924-client,nad-1924-ldap,nad-1924-nfs nad-1924
 ```
-### Node Example: 3 Interfaces (6 NICs in 3 bonds)
+
+### Node Example: 3 Interfaces
+
+> Node with three NICs or 6 NICs in 3 bonds
 
 The first two interfaces are bound into `bond0`. There is only a native VLAN on this bond.
 The second two interfaces are bound into `bond1` which recieve multiple VLAN tags from the switch.
@@ -189,10 +197,10 @@ graph LR;
 
     classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
 
-    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond0 fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
     class br-ex,physnet-ex,node1-bond0 bond0
 
-    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond1 fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata,node1-bond1 bond1
 
     classDef bond2 fill:#daf2f2,color:#004d4d,stroke:#333,stroke-width:2px
@@ -201,7 +209,7 @@ graph LR;
     classDef labels stroke-width:1px,color:#fff,fill:#005577
     classDef networks fill:#cdd,stroke-width:0px
 
-    style Localnets fill:#fff,stroke:#000,stroke-width:1px
+    style Localnets fill:#fff,color:#aaa,stroke:#000,stroke-width:1px
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
     style Internet fill:none,stroke-width:0px,font-size:+2em
 
@@ -212,8 +220,152 @@ graph LR;
     classDef nad-1924 fill:#00ffff,color:#00f,stroke:#333,stroke-width:1px
 ```
 
+### Node Example: Non-routeable Storage Network
+
+> Node with multihome presence on storage VLAN
+
+It may be necessary to place a node on the same network as a storage array which is not otherwise reachable. This could be done by modifying each node and placing an IP address on a NIC or a VLAN interface. If the storage is not directly attached a static route may be used to direct traffic out the desired interface.
+
+The first two interfaces are bound into `bond0`. There is only a native VLAN on this bond.
+The second two interfaces are bound into `bond1` which recieve multiple VLAN tags from the switch.
+VLAN Interface `bond1.456` has an IP on storage network.
+
+```mermaid
+graph LR;
+    subgraph Cluster[" "]
+
+      subgraph Localnets["Physnet Mappings"]
+        physnet-ex[Localnet<br> 🧭 physnet]
+        physnet-vmdata[Localnet<br> 🧭 physnet-vmdata]
+      end
+
+    subgraph Storage["️Storage "]
+      filer["💾 filer"]
+    end
+
+      subgraph node1["🖥️ Node "]
+        br-ex[ OVS Bridge<br> 🔗 br-ex]
+        br-vmdata[ OVS Bridge<br> 🔗 br-vmdata]
+        node1-vlan-storage[VLAN Int<br> bond1.456 🏷️]
+        node1-bond0[bond0 🔌]
+        node1-bond1[bond1 🔌]
+      end
+    end
+
+    physnet-ex -- maps to --> br-ex
+    physnet-vmdata --> br-vmdata
+    br-ex --> node1-bond0
+    br-vmdata --> node1-bond1
+    node1-vlan-storage --> node1-bond1
+
+    Internet["☁️ "]:::Internet
+    node1-bond0 ==default gw==> Internet
+    node1-bond1 ==(🏷️ 802.1q trunk)==> Internet
+    filer <--storage net--> node1-vlan-storage
+
+    classDef node-eth fill:#00dddd,color:#00f,stroke:#333,stroke-width:2px
+
+    classDef bond0 fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
+    class br-ex,physnet-ex,node1-bond0 bond0
+
+    classDef bond1 fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
+    class br-vmdata,physnet-vmdata,node1-bond1 bond1
+
+    classDef bond2 fill:#daf2f2,color:#004d4d,stroke:#333,stroke-width:2px
+    class node1-vlan-storage,node1-bond2,filer bond2
+
+    classDef labels stroke-width:1px,color:#fff,fill:#005577
+    classDef networks fill:#cdd,stroke-width:0px
+
+    style Localnets fill:#fff,color:#aaa,stroke:#000,stroke-width:1px
+    style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
+    style Internet fill:none,stroke-width:0px,font-size:+2em
+    style Storage color:#000,fill:#fff,stroke:#333,stroke-width:0px
+
+    classDef nodes fill:#fff,stroke:#000,stroke-width:3px
+    class node1,node2,node3 nodes
+
+
+    classDef nad-1924 fill:#00ffff,color:#00f,stroke:#333,stroke-width:1px
+```
+
+
 ## Logical Network Configuration
 
+Logical networks are managed by the User Defined Network resource. If a logical network should be usable by more than one namespace, then a Cluster User Defined Network resource should be used instead.
+
+Logical networks in OVN Kuberntes may be defined with one of 3 topology types. Access to a physical VLAN is via a logical network of 'localnet' topology.
+
+Workloads access Logical networks by way of Network Attachment Definitions. Network attachment definitions are namespace scoped and this enables them to be shared or isolated among tenants.
+
+### Shared Localnet
+
+Network attachment definitions in the 'default' namespace are available for use by workloads in all namespaces.
+
+```mermaid
+graph LR;
+    subgraph Cluster[" "]
+      udn-localnet-1924["CUDN<br>️🛜  localnet-1924"];
+      udn-controller[/"⚙️ UDN Controller"/];
+
+      subgraph Localnets["Physnet Mappings"]
+        physnet-vmdata[Localnet<br> 🧭 physnet-vmdata];
+      end
+
+
+      subgraph Project["Project Scoped"]
+        subgraph ns-default["📦 ️**default** Namespace"]
+          nad-1924-default[NAD<br> 🛜 localnet-1924];
+        end
+      end
+      subgraph node1["🖥️ Node "]
+        br-vmdata[ OVS Bridge<br> 🔗 br-vmdata];
+      end
+    end
+
+    udn-localnet-1924 -. selects .-> ns-default
+
+    linkStyle 0 stroke:#007799,stroke-width:2px;
+
+    udn-controller --creates--> nad-1924-default
+
+    linkStyle 1 stroke:#00dddd,stroke-width:2px;
+
+    udn-controller == implements ==> udn-localnet-1924
+    udn-localnet-1924 -. references .-> physnet-vmdata
+    physnet-vmdata -- maps to  --> br-vmdata
+
+    linkStyle 2,3,4 stroke-width:2px;
+
+    Internet["☁️ "]:::Internet
+    br-vmdata ==> Internet
+
+    classDef cudn fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
+    class nad-1924-default,udn-localnet-1924 cudn;
+
+    classDef bond1 fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
+    class br-vmdata,physnet-vmdata bond1
+
+    classDef labels stroke-width:1px,stroke:#9ad8d8,color:#00d4d4,fill:#daf2f2;
+    classDef networks fill:#cdd,stroke-width:0px;
+
+    style udn-controller fill:#ddd,stroke:#000,stroke-width:1px;
+    style node1 fill:#fff,stroke:#000,stroke-width:3px;
+    style Localnets fill:#fff,color:#aaa,stroke:#000,stroke-width:1px
+    style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px;
+    style Project color:#aaa,fill:#dff,stroke:#333,stroke-width:0px
+    style Internet fill:none,stroke-width:0px,font-size:+2em;
+
+    classDef nodes stroke-width:3px;
+    class node1,node2,node3 nodes;
+
+    classDef namespace color:#000,fill:#fff,stroke:#000,stroke-width:2px;
+    class ns-default namespace;
+
+```
+
+
+### Isolated Localnet
 Logical networks are managed by the User Defined Network resource. If a logical network should be usable by more than one namespace, then a Cluster User Defined Network resource should be used instead.
 
 Logical networks in OVN Kuberntes may be defined with one of 3 topology types. Access to a physical VLAN is via a logical network of 'localnet' topology.
@@ -228,13 +380,14 @@ The `ClusterUserDefinedNetwork` [localnet-1924](../components/localnet-1924/clus
 
 ```mermaid
 graph LR;
-    subgraph Cluster[" "]
-      udn-localnet-1924["CUDN<br>️ 📄 localnet-1924"]:::udn-localnet-1924
-      udn-controller[/"⚙️ UDN Controller"/]
+    subgraph Cluster["Cluster Scoped"]
+        udn-localnet-1924["CUDN<br>️🛜  localnet-1924"]:::udn-localnet-1924
+        udn-controller[/"⚙️ UDN Controller"/]
 
       subgraph Localnets["Physnet Mappings"]
         physnet-vmdata[Localnet<br> 🧭 physnet-vmdata]:::nad-1924;
       end
+
 
       subgraph Project["Project Scoped"]
         subgraph ns-nfs["🗄️ **demo-nfs** Namespace"]
@@ -278,7 +431,10 @@ graph LR;
     Internet["☁️ "]:::Internet
     br-vmdata ==> Internet
 
-    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef cudn fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
+    class udn-localnet-1924 cudn
+
+    classDef bond1 fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata bond1
 
     classDef labels stroke-width:1px,stroke:#9ad8d8,color:#00d4d4,fill:#daf2f2;
@@ -286,9 +442,9 @@ graph LR;
 
     style udn-controller fill:#ddd,stroke:#000,stroke-width:1px;
     style node1 fill:#fff,stroke:#000,stroke-width:3px;
-    style Localnets fill:#fff,stroke:#000,stroke-width:1px;
+    style Localnets fill:#fff,color:#aaa,stroke:#000,stroke-width:1px
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px;
-    style Project color:#000,fill:#dff,stroke:#333,stroke-width:0px
+    style Project color:#aaa,fill:#dff,stroke:#333,stroke-width:0px
     style Internet fill:none,stroke-width:0px,font-size:+2em;
 
     classDef nodes stroke-width:3px;
@@ -297,21 +453,21 @@ graph LR;
     class ns-nfs,ns-client,ns-ldap namespace;
 
     classDef nad-1924 fill:#37a3a3,color:#004d4d,stroke:#333,stroke-width:1px;
-    class nad-1924-client,nad-1924-ldap,nad-1924-nfs,udn-localnet-1924 nad-1924;
+    class nad-1924-client,nad-1924-ldap,nad-1924-nfs,udn-localnet-1924 cudn;
 ```
 
 ## VM Connectivity
 
 The UDN Controller will ensure that any namespace identified by the CUDN selector has a `NetworkAttachmentDefinition` created within it. This NAD will be used to create a port on the vswitch for the virtual machine NICs to attach to.
 
-Workloads can now reference the NAD in the local namespace to attached to the VLAN 1924.
+Workloads can now reference the NAD in the local namespace to attached to the VLAN 1924.t
 
 ```mermaid
 graph LR;
     subgraph Cluster[" "]
 
       subgraph Project[" "]
-        subgraph ns-nfs["🗄️ **demo-nfs** Namespace"]
+        subgraph ns-nfs["📦 ️**demo-nfs** Namespace"]
           label-nfs("🏷️ vlan-1924")
           nad-1924-nfs[NAD<br> 🛜 localnet-1924]
           subgraph vm-nfs["🗄️ NFS Server"]
@@ -319,7 +475,7 @@ graph LR;
           end
         end
 
-        subgraph ns-ldap["🔎 **demo-ldap** Namespace"]
+        subgraph ns-ldap["📦 **demo-ldap** Namespace"]
           label-ldap("🏷️ vlan-1924")
           nad-1924-ldap[NAD<br> 🛜 localnet-1924]
           subgraph vm-ldap["🔎 LDAP Server"]
@@ -327,7 +483,7 @@ graph LR;
           end
         end
 
-        subgraph ns-client["💻 **demo-client** Namespace"]
+        subgraph ns-client["📦 **demo-client** Namespace"]
           label-client("🏷️ vlan-1924")
           nad-1924-client[NAD<br> 🛜 localnet-1924]
           subgraph vm-client["💻 Client"]
@@ -398,10 +554,12 @@ graph LR;
         physnet-ex[Localnet<br> 🧭 physnet]
         physnet-vmdata[Localnet<br> 🧭 physnet-vmdata]
       end
-        subgraph ns-client[" Firewall Namespace"]
+        subgraph ns-client["📦 **firewall** Namespace"]
           nad-vgt-client[NAD<br> 🛜 trunk]
           subgraph vm-client["🔥 Firewall"]
               vgt-client-eth0[eth0 🔌]
+              vgt-client-vlan1[eth0.1 🏷️]:::Vlan1
+              vgt-client-vlan2[eth0.2 🏷️]:::Vlan2
           end
         end
 
@@ -423,25 +581,30 @@ graph LR;
     vgt-client-eth0 <==(🏷️ 802.1q trunk)==> br-linux
     vgt-client-eth0 -.-> nad-vgt-client
     nad-vgt-client -.->  br-linux
+    vgt-client-vlan1 --> vgt-client-eth0
+    vgt-client-vlan2 --> vgt-client-eth0
 
     Internet["☁️ "]:::Internet
     node1-bond0 ==default gw==> Internet
     node1-bond1 ==(🏷️ 802.1q trunk)==> Internet
     node1-bond2 ==(🏷️ 802.1q trunk)==> Internet
 
-    classDef bond0 fill:#37A3A3,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond0 fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
     class br-ex,physnet-ex,node1-bond0 bond0
 
-    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond1 fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
     class br-vmdata,physnet-vmdata,node1-bond1 bond1
 
     classDef bond2 fill:#daf2f2,color:#004d4d,stroke:#333,stroke-width:2px
     class nad-vgt-client,vgt-client-eth0,br-linux,node1-bond2 bond2
 
+    classDef Vlan1 fill:#fae2f2,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef Vlan2 fill:#daffd2,color:#004d4d,stroke:#333,stroke-width:2px
+
     classDef labels stroke-width:1px,color:#fff,fill:#005577
     classDef networks fill:#cdd,stroke-width:0px
 
-    style Localnets fill:#fff,stroke:#000,stroke-width:1px
+    style Localnets fill:#fff,color:#aaa,stroke:#000,stroke-width:1px
     style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
     style Internet fill:none,stroke-width:0px,font-size:+2em
 
