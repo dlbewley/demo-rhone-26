@@ -15,6 +15,6 @@ spec:
       physicalNetworkName: physnet
       # set this to match the MTU of the physical network
       mtu: 1500
-      # use DHCP from the datacenter
+      # use DHCP from the datacenter https://issues.redhat.com/browse/CNV-64523
       ipam:
         mode: Disabled
