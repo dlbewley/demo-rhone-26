@@ -8,7 +8,10 @@ metadata:
 spec:
   # what namespaces should have access to this network
   namespaceSelector:
-    kubernetes.io/metadata.name: default
+    matchLabels:
+      # creates NAD in 'default' namespace for use by any project
+      # revise to select specific namespaces
+      kubernetes.io/metadata.name: default
   network:
     topology: Localnet
     localnet:
