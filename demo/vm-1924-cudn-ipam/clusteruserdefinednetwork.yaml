@@ -1,0 +1,31 @@
+---
+# https://ovn-kubernetes.io/api-reference/userdefinednetwork-api-spec/#clusteruserdefinednetworkspec
+# can only be created by cluster-admin
+apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  name: vlan-1924-ipam
+spec:
+  # what namespaces should have access to this network
+  namespaceSelector:
+    kubernetes.io/metadata.name: default
+  network:
+    topology: Localnet
+    localnet:
+      role: Secondary
+      # bridge mapping
+      physicalNetworkName: physnet-vmdata
+      vlan:
+        mode: Access
+        access:
+          id: 1924
+      ipam:
+        mode: Enabled
+        # lifecycle: Persistent
+      subnets:
+        - "192.168.4.0/24"
+      # do not dole out these IPs
+      excludeSubnets:
+        - "192.168.4.0/25"
+        - "192.168.4.128/26"
+        - "192.168.4.240/28"

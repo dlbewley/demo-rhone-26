@@ -1,0 +1,13 @@
+apiVersion: k8s.ovn.org/v1
+kind: UserDefinedNetwork
+metadata:
+  name: primary-udn
+  description: "Primary UDN becomes the default route for pods in the namespace. Only one primary UDN per namespace is allowed."
+spec:
+  topology: Layer2
+  layer2:
+    ipam:
+      lifecycle: Persistent
+    role: Primary
+    subnets:
+      - 10.1.1.0/24

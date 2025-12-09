@@ -1,0 +1,14 @@
+apiVersion: k8s.ovn.org/v1
+kind: UserDefinedNetwork
+metadata:
+  finalizers:
+    - k8s.ovn.org/user-defined-network-protection
+  name: secondary-udn
+spec:
+  topology: Layer2
+  layer2:
+    ipam:
+      lifecycle: Persistent
+    role: Secondary
+    subnets:
+      - 10.2.2.0/24
