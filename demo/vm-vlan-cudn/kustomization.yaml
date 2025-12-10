@@ -2,7 +2,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: demo-vm-machinenet
+namespace: demo-vm-vlan
 
 resources:
   - namespace.yaml
@@ -10,7 +10,7 @@ resources:
   - virtualmachine.yaml
 
 # components:
-#   - ../components/machinenet-cudn
+#   - ../components/localnet-1926-cudn
 
 patches:
   - target:
@@ -22,7 +22,7 @@ patches:
       # rename VM
       - op: replace
         path: /metadata/name
-        value: vm-1924-ipam
+        value: vm-vlan
 
       # start VM at creation
       - op: replace
@@ -30,12 +30,11 @@ patches:
         value: RerunOnFailure
 
       # convert default interface from cluster network masquerade
-      # to machinenet CUDN network attachment definition
-      # note namespace in net-attach-def multus reference if necessary
+      # to bridge interface
       - op: replace
         path: /spec/template/spec/domain/devices/interfaces/0
         value: {
-          "name": "nic-machinenet",
+          "name": "nic-vlan-1926",
           "bridge": {},
           "model": "virtio"
         }
@@ -45,8 +44,8 @@ patches:
       - op: replace
         path: /spec/template/spec/networks/0
         value: {
-          "name": "nic-machinenet",
+          "name": "nic-vlan-1926",
           "multus": {
-            "networkName": "default/vlan-1924-ipam"
+            "networkName": "default/localnet-1926"
           }
         }

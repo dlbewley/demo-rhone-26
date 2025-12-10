@@ -4,7 +4,7 @@
 apiVersion: k8s.ovn.org/v1
 kind: ClusterUserDefinedNetwork
 metadata:
-  name: vlan-1924
+  name: localnet-1926
 spec:
   # what namespaces should have access to this network
   namespaceSelector:
@@ -21,7 +21,7 @@ spec:
       vlan:
         mode: Access
         access:
-          id: 1924
+          id: 1926
       ipam:
         # use DHCP from the datacenter https://issues.redhat.com/browse/CNV-64523
         mode: Disabled
