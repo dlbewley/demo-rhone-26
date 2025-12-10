@@ -1,0 +1,21 @@
+---
+apiVersion: frrk8s.metallb.io/v1beta1
+kind: FRRConfiguration
+metadata:
+  labels:
+    advertise: "true"
+    bgp-as: "64510"
+  name: fortmax01
+  namespace: openshift-frr-k8s
+spec:
+  bgp:
+    routers:
+    - asn: 64560
+      neighbors:
+      - address: 192.168.3.1
+        asn: 64510
+        disableMP: true
+        dualStackAddressFamily: false
+        toAdvertise:
+          allowed:
+            mode: all

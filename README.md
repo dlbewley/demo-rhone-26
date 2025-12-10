@@ -380,7 +380,7 @@ The `ClusterUserDefinedNetwork` [localnet-1924](../components/localnet-1924/clus
 
 ```mermaid
 graph LR;
-    subgraph Cluster["Cluster Scoped"]
+    subgraph Cluster[" "]
         udn-localnet-1924["CUDN<br>️🛜  localnet-1924"]:::udn-localnet-1924
         udn-controller[/"⚙️ UDN Controller"/]
 
@@ -516,7 +516,7 @@ graph LR;
     classDef vm-eth fill:#00ffff,color:#00f,stroke:#444,stroke-width:1px;
     class client-eth0,ldap-eth0,nfs-eth0 vm-eth;
 
-    classDef bond1 fill:#9ad8d8,color:#004d4d,stroke:#333,stroke-width:2px
+    classDef bond1 fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
     class nad-1924-client,nad-1924-ldap,nad-1924-nfs,br-vmdata,physnet-vmdata bond1
     class client-eth0,ldap-eth0,nfs-eth0 bond1
 

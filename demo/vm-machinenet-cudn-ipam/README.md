@@ -55,6 +55,7 @@ The VM will receive its IP address via DHCP from the datacenter network. The phy
 
 
 ### IPAM not supported
+
 > Petr Horáček
 > Although this mostly works, there is no support for CNI IPAM or OVN subnets in CNV, the only exception to it is primary UDN.
 > If you have customers who need localnet IPAM, please link them to the epic. https://issues.redhat.com/browse/CNV-64523

@@ -1,11 +1,11 @@
 # VM with MachineNet ClusterUserDefinedNetwork
 
-This directory contains Kubernetes manifests for deploying a VirtualMachine that uses a ClusterUserDefinedNetwork (CUDN) with Localnet topology.
+This directory contains Kubernetes manifests for deploying a VirtualMachine that uses a ClusterUserDefinedNetwork (CUDN) with Localnet topology on the cluster Machine Network on `br-ex`.
 
 ## Overview
 
 This demo demonstrates how to:
-- Create a ClusterUserDefinedNetwork with Localnet topology
+- Create a ClusterUserDefinedNetwork with Localnet topology for attaching to the Node or Machine Network
 - Configure a VirtualMachine to use the CUDN instead of the default pod network
 - Connect the VM to a physical network via OVN localnet
 

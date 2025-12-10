@@ -1,0 +1,19 @@
+---
+apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  labels:
+    advertise: "true"
+  name: cluster-udn-001
+spec:
+  namespaceSelector:
+    matchLabels:
+      jinkit-udn: "001"
+  network:
+    layer2:
+      ipam:
+        lifecycle: Persistent
+      role: Primary
+      subnets:
+      - 10.60.0.0/22
+    topology: Layer2

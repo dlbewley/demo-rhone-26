@@ -1,0 +1,17 @@
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: ovs-bridge-mapping-physnet-vmdata
+spec:
+  nodeSelector:
+    # override selector in overlay if necessary
+    node-role.kubernetes.io/worker: ""
+  desiredState:
+    ovn:
+      bridge-mappings:
+        # this value will be used as physicalNetworkName in every (C)UDN using the same bridge
+        - localnet: physnet-vmdata
+          # override bridge name in overlay if necessary
+          bridge: br-vmdata
+          state: present
