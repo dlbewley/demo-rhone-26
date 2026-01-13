@@ -1,0 +1,27 @@
+---
+# https://ovn-kubernetes.io/api-reference/userdefinednetwork-api-spec/#clusteruserdefinednetworkspec
+# can only be created by cluster-admin
+apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  name: localnet-1926
+spec:
+  # what namespaces should have access to this network
+  namespaceSelector:
+    matchLabels:
+      # creates NAD in 'default' namespace for use by any project
+      # revise to select specific namespaces
+      kubernetes.io/metadata.name: default
+  network:
+    topology: Localnet
+    localnet:
+      role: Secondary
+      # bridge mapping
+      physicalNetworkName: physnet-vmdata
+      vlan:
+        mode: Access
+        access:
+          id: 1926
+      ipam:
+        # use DHCP from the datacenter https://issues.redhat.com/browse/CNV-64523
+        mode: Disabled

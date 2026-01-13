@@ -1,0 +1,41 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: demo-vm-primary-udn
+
+resources:
+  - namespace.yaml
+  - userdefinednetwork.yaml
+  - virtualmachine.yaml
+
+# components:
+  # - ../components/primary-udn
+  # - ../components/vm
+
+patches:
+  - target:
+      group: kubevirt.io
+      kind: VirtualMachine
+      name: .*
+      version: v1
+    patch: |-
+      # rename VM
+      - op: replace
+        path: /metadata/name
+        value: vm-primary-udn
+
+      # start VM at creation
+      - op: replace
+        path: /spec/runStrategy
+        value: RerunOnFailure
+
+      # convert default interface from cluster network masquerade
+      # to primary UDN l2bridge binding
+      - op: replace
+        path: /spec/template/spec/domain/devices/interfaces/0
+        value: {
+          "name": "default",
+          "binding": {"name": "l2bridge"},
+          "model": "virtio"
+        }

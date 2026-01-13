@@ -1,0 +1,61 @@
+# this is a hack to attach multiple NICs to the same network
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  labels:
+    k8s.ovn.org/user-defined-network: ""
+  name: secondary-udn-a
+  namespace: demo-sandbox
+spec:
+  config: |-
+    {
+    "allowPersistentIPs": true,
+    "cniVersion": "1.0.0",
+    "name": "demo-sandbox_secondary-udn",
+    "netAttachDefName": "demo-sandbox/secondary-udn-a",
+    "role": "secondary",
+    "subnets": "10.2.2.0/24",
+    "topology": "layer2",
+    "type": "ovn-k8s-cni-overlay"
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  labels:
+    k8s.ovn.org/user-defined-network: ""
+  name: secondary-udn-b
+  namespace: demo-sandbox
+spec:
+  config: |-
+    {
+    "allowPersistentIPs": true,
+    "cniVersion": "1.0.0",
+    "name": "demo-sandbox_secondary-udn",
+    "netAttachDefName": "demo-sandbox/secondary-udn-b",
+    "role": "secondary",
+    "subnets": "10.2.2.0/24",
+    "topology": "layer2",
+    "type": "ovn-k8s-cni-overlay"
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  labels:
+    k8s.ovn.org/user-defined-network: ""
+  name: secondary-udn-c
+  namespace: demo-sandbox
+spec:
+  config: |-
+    {
+    "allowPersistentIPs": true,
+    "cniVersion": "1.0.0",
+    "name": "demo-sandbox_secondary-udn",
+    "netAttachDefName": "demo-sandbox/secondary-udn-c",
+    "role": "secondary",
+    "subnets": "10.2.2.0/24",
+    "topology": "layer2",
+    "type": "ovn-k8s-cni-overlay"
+    }

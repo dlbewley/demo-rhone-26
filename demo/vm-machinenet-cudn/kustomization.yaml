@@ -1,0 +1,52 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: demo-vm-machinenet
+
+resources:
+  - namespace.yaml
+  - clusteruserdefinednetwork.yaml
+  - virtualmachine.yaml
+
+# components:
+#   - ../components/machinenet-cudn
+
+patches:
+  - target:
+      group: kubevirt.io
+      kind: VirtualMachine
+      name: .*
+      version: v1
+    patch: |-
+      # rename VM
+      - op: replace
+        path: /metadata/name
+        value: vm-machinenet
+
+      # start VM at creation
+      - op: replace
+        path: /spec/runStrategy
+        value: RerunOnFailure
+
+      # convert default interface from cluster network masquerade
+      # to machinenet CUDN network attachment definition
+      # note namespace in net-attach-def multus reference if necessary
+      - op: replace
+        path: /spec/template/spec/domain/devices/interfaces/0
+        value: {
+          "name": "nic-machinenet",
+          "bridge": {},
+          "model": "virtio"
+        }
+
+      # rehome default interface to network attachment definition
+      # note namespace in net-attach-def multus reference if necessary
+      - op: replace
+        path: /spec/template/spec/networks/0
+        value: {
+          "name": "nic-machinenet",
+          "multus": {
+            "networkName": "default/machinenet"
+          }
+        }

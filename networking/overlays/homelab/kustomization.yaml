@@ -5,18 +5,41 @@ kind: Kustomization
 resources:
   - ../../base/
 
-components:
-  - ../../../components/l2-infra
-  - ../../../components/localnet-1924
-  - ../../../components/localnet-1924-dhcp
+# components:
+#   - ../../../components/l2-infra
+#   - ../../../components/localnet-1926-cudn
 
 patches:
   - target:
+      group: nmstate.io
       kind: NodeNetworkConfigurationPolicy
       name: ovs-bridge-mapping-physnet-vmdata
+      version: v1
+
     patch: |-
       - op: replace
         path: /spec/nodeSelector
         value: {
-              "machine.openshift.io/cluster-api-machineset": "hub-v57jl-cnv"
+              "machine.openshift.io/cluster-api-machineset": "hub-4k77l-cnv"
         }
+
+  - target:
+      group: nmstate.io
+      kind: NodeNetworkConfigurationPolicy
+      name: br-vmdata
+      version: v1
+
+    patch: |-
+      - op: replace
+        path: /spec/nodeSelector
+        value: {
+              "machine.openshift.io/cluster-api-machineset": "hub-4k77l-cnv"
+        }
+
+      - op: replace
+        path: /spec/desiredState/interfaces/0/name
+        value: ens224
+
+      - op: replace
+        path: /spec/desiredState/interfaces/1/bridge/port/0/name
+        value: ens224
