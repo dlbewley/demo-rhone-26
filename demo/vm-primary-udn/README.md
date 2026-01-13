@@ -9,6 +9,8 @@ This demo demonstrates how to:
 - Configure a VirtualMachine to use the Primary UDN as its default network
 - Set up a namespace-scoped network that becomes the default route for pods in that namespace
 
+[![asciicast](https://asciinema.org/a/767661.svg)](https://asciinema.org/a/767661)
+
 ## Components
 
 ### UserDefinedNetwork
