@@ -9,7 +9,34 @@ This demo demonstrates how to:
 - Configure a VirtualMachine to use the Primary UDN as its default network
 - Set up a namespace-scoped network that becomes the default route for pods in that namespace
 
-[![asciicast](https://asciinema.org/a/767661.svg)](https://asciinema.org/a/767661)
+## Demo
+### Recorded Demo
+
+[![asciicast](https://asciinema.org/a/767661.svg?poster=npt:0:07)](https://asciinema.org/a/767661)
+
+### Interactive Demo Script
+
+Run the interactive demo script to walk through the deployment:
+
+```bash
+./demo/vm-primary-udn/demo.sh
+```
+
+The script will:
+- Display the manifests and explain their configuration
+- Apply the kustomization to your cluster
+- Verify the namespace, UDN, and VirtualMachine
+- Show network configuration details including pod interfaces and OVN setup
+
+**Prerequisites:**
+- [demo-magic](https://github.com/paxtonhare/demo-magic) installed at `~/src/demos/demo-magic`
+- `bat`, `tree`, `yq`, `kfilt`, `kubecolor`, `figlet`, and `lolcat` installed
+- Access to an OpenShift/Kubernetes cluster with `oc` or `kubectl`
+
+To clean up after the demo, run:
+```bash
+RUN_CLEANUP=true ./demo/vm-primary-udn/demo.sh
+```
 
 ## Components
 
@@ -21,7 +48,7 @@ The `userdefinednetwork.yaml` defines a UDN named `primary-udn` with:
 - **Subnet**: `10.1.1.0/24`
 - **IPAM Lifecycle**: Persistent
 
-**Note**: Only one Primary UDN per namespace is allowed.
+**Note**: Only one _Primary_ UDN per namespace is allowed.
 
 ### VirtualMachine
 
@@ -44,11 +71,17 @@ The `kustomization.yaml`:
 
 ## Deployment
 
-Apply the kustomization:
+### Quick Deploy
+
+Apply the kustomization directly:
 
 ```bash
 kubectl apply -k demo/vm-primary-udn
 ```
+
+### Interactive Demo
+
+For a guided walkthrough with explanations, use the [interactive demo script](#interactive-demo-script) instead.
 
 ## Network Configuration
 
