@@ -1,45 +1,56 @@
+# oc process \
+#   template/rhel9-server-small \
+#   -n openshift \
+#   -p NAME=demo-vm-cudn-bgp -o yaml \
+#   | yq '.items[0] | .metadata.namespace = "demo-cudn-bgp"' \
+#   > virtualmachine.yaml
 ---
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
   annotations:
-  name: fedora-static-cudn-01
-  namespace: jinkit-udn-001
+    vm.kubevirt.io/validations: |
+      [
+        {
+          "name": "minimal-required-memory",
+          "path": "jsonpath::.spec.domain.memory.guest",
+          "rule": "integer",
+          "message": "This VM requires more memory.",
+          "min": 1610612736
+        }
+      ]
   labels:
-    app: fedora-static-cudn-01
-    kubevirt.io/dynamic-credentials-support: 'true'
-    vm.kubevirt.io/template: fedora-server-small
-    vm.kubevirt.io/template.namespace: openshift
-    vm.kubevirt.io/template.revision: '1'
+    app: demo-vm-cudn-bgp
+    kubevirt.io/dynamic-credentials-support: "true"
+    vm.kubevirt.io/template: rhel9-server-small
+    vm.kubevirt.io/template.revision: "1"
     vm.kubevirt.io/template.version: v0.34.1
+  name: demo-vm-cudn-bgp
+  namespace: demo-cudn-bgp
 spec:
   dataVolumeTemplates:
     - apiVersion: cdi.kubevirt.io/v1beta1
       kind: DataVolume
       metadata:
-        creationTimestamp: null
-        name: fedora-static-cudn-01
+        name: demo-vm-cudn-bgp
       spec:
         sourceRef:
           kind: DataSource
-          name: fedora
+          name: rhel9
           namespace: openshift-virtualization-os-images
         storage:
           resources:
             requests:
               storage: 30Gi
-  runStrategy: RerunOnFailure
+  runStrategy: Halted
   template:
     metadata:
       annotations:
-      # 4.21 only
-        network.kubevirt.io/addresses: '{"eth0": ["10.60.0.60"]}'
         vm.kubevirt.io/flavor: small
-        vm.kubevirt.io/os: fedora
+        vm.kubevirt.io/os: rhel9
         vm.kubevirt.io/workload: server
-      creationTimestamp: null
       labels:
-        kubevirt.io/domain: fedora-static-cudn-01
+        kubevirt.io/domain: demo-vm-cudn-bgp
         kubevirt.io/size: small
     spec:
       architecture: amd64
@@ -57,32 +68,30 @@ spec:
                 bus: virtio
               name: cloudinitdisk
           interfaces:
-            - binding:
-                name: l2bridge
+            - masquerade: {}
               model: virtio
-              name: eth0
+              name: default
           rng: {}
         features:
-          acpi: {}
           smm:
             enabled: true
-        machine:
-          type: pc-q35-rhel9.6.0
+        firmware:
+          bootloader:
+            efi: {}
         memory:
           guest: 2Gi
-        resources: {}
       networks:
-        - name: eth0
+        - name: default
           pod: {}
       terminationGracePeriodSeconds: 180
       volumes:
         - dataVolume:
-            name: fedora-static-cudn-01
+            name: demo-vm-cudn-bgp
           name: rootdisk
         - cloudInitNoCloud:
             userData: |-
               #cloud-config
-              user: fedora
-              password: fedora
+              user: cloud-user
+              password: g6yr-cm3y-c02c
               chpasswd: { expire: False }
           name: cloudinitdisk

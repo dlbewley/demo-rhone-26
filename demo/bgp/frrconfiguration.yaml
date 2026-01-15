@@ -4,16 +4,18 @@ kind: FRRConfiguration
 metadata:
   labels:
     advertise: "true"
-    bgp-as: "64510"
-  name: fortmax01
+    bgp-as: "65002"
+    export-as: "65002"
+  name: unifi-router
+  # must go to this namespace
   namespace: openshift-frr-k8s
 spec:
   bgp:
     routers:
-    - asn: 64560
+    - asn: 65002
       neighbors:
-      - address: 192.168.3.1
-        asn: 64510
+      - address: 192.168.4.1
+        asn: 65001
         disableMP: true
         dualStackAddressFamily: false
         toAdvertise:
