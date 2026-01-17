@@ -200,3 +200,141 @@ Route Table <main>:
 - FRRConfiguration must be in the `openshift-frr-k8s` namespace
 - Ensure the external router is configured to accept BGP peering from the cluster
 
+## Demo
+
+```mermaid
+graph LR;
+    subgraph Cluster[" "]
+        subgraph RouteAdv["Route Advertisement"]
+            ra-default["RouteAdvertisements<br> 📢 default"]
+        end
+
+        subgraph FRRConfig["FRR Configuration"]
+            frr-unifi["FRRConfiguration<br> 🔀 unifi-router<br> 🏷️ export-as: 65002"]
+        end
+
+        subgraph CUDN["Cluster User Defined Network"]
+            cudn-1065["ClusterUserDefinedNetwork<br> 🛜 cudn-10-65-0-0-24<br> 🏷️ export-as: 65002"]
+        end
+
+        subgraph Project["Project Scoped"]
+            subgraph ns-bgp["📦 **demo-cudn-bgp** Namespace"]
+                label-ns("🏷️ cudn-10-65-0-0-24: true"):::labels
+                nad-bgp[NAD<br> 🛜 cudn-10-65-0-0-24]
+                subgraph vm-bgp["💻 VirtualMachine"]
+                    vm-eth0[eth0 🔌]
+                end
+            end
+        end
+    end
+
+    ra-default -.frrConfigurationSelector<br>matchLabels: export-as: 65002.-> frr-unifi
+    ra-default -.clusterUserDefinedNetworkSelector<br>matchLabels: export-as: 65002.-> cudn-1065
+
+    linkStyle 0,1 stroke:#007799,stroke-width:2px,stroke-dasharray: 5 5;
+
+    cudn-1065 -.namespaceSelector<br>matchLabels: cudn-10-65-0-0-24: true.-> ns-bgp
+
+    linkStyle 2 stroke:#007799,stroke-width:2px,stroke-dasharray: 5 5;
+
+    cudn-1065 --creates--> nad-bgp
+
+    linkStyle 3 stroke:#00dddd,stroke-width:2px;
+
+    vm-eth0 ---> nad-bgp
+
+    linkStyle 4 stroke:#00dddd,stroke-width:2px;
+
+    classDef cudn fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
+    class nad-bgp,cudn-1065 cudn
+
+    classDef frr fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
+    class frr-unifi frr
+
+    classDef ra fill:#daf2f2,color:#004d4d,stroke:#333,stroke-width:2px
+    class ra-default ra
+
+    classDef labels stroke-width:1px,stroke:#9ad8d8,color:#00d4d4,fill:#daf2f2
+    class label-ns labels
+
+    classDef vm-eth fill:#00ffff,color:#00f,stroke:#444,stroke-width:1px
+    class vm-eth0 vm-eth
+
+    style ra-default fill:#ddd,stroke:#000,stroke-width:1px
+    style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
+    style Project color:#aaa,fill:#dff,stroke:#333,stroke-width:0px
+    style RouteAdv color:#aaa,fill:#fff,stroke:#333,stroke-width:0px
+    style FRRConfig color:#aaa,fill:#fff,stroke:#333,stroke-width:0px
+    style CUDN color:#aaa,fill:#fff,stroke:#333,stroke-width:0px
+
+    classDef namespace color:#000,fill:#fff,stroke:#000,stroke-width:2px
+    class ns-bgp namespace
+
+    classDef vm color:#000,fill:#eee,stroke:#000,stroke-width:2px
+    class vm-bgp vm
+```
+
+### Network Flow
+
+```mermaid
+graph TD;
+    subgraph Cluster[" "]
+        subgraph ns-bgp["📦 **demo-cudn-bgp** Namespace"]
+            subgraph vm-bgp["💻 VirtualMachine"]
+                vm-ip["10.65.0.60<br>🔌 eth0"]
+            end
+            cudn-subnet["CUDN<br>🛜 10.65.0.0/24"]
+        end
+
+        subgraph OVN["OVN Gateway Router"]
+            ovn-gw["Gateway Router<br>🔀 10.65.0.1"]
+        end
+    end
+
+    subgraph External["External Network"]
+        unifi-router["Unifi Router<br>🔀 192.168.4.1<br>ASN: 65001"]
+    end
+
+    subgraph Annex["The Annex"]
+        annex-vm["VirtualMachine<br>💻 10.254.254.252"]
+    end
+
+    vm-ip ---> cudn-subnet
+    cudn-subnet --> ovn-gw
+    ovn-gw ==BGP Session<br>ASN: 65002==> unifi-router
+    unifi-router --> annex-vm
+
+    linkStyle 0,1 stroke:#00dddd,stroke-width:2px
+    linkStyle 2 stroke:#007799,stroke-width:3px
+    linkStyle 3 stroke:#00dddd,stroke-width:2px
+
+    ovn-gw -."advertises<br>10.65.0.0/24 via BGP".-> unifi-router
+
+    linkStyle 4 stroke:#007799,stroke-width:2px,stroke-dasharray: 5 5
+
+    classDef cudn fill:#37A3A3,color:#fff,stroke:#333,stroke-width:2px
+    class cudn-subnet cudn
+
+    classDef ovn fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
+    class ovn-gw ovn
+
+    classDef router fill:#daf2f2,color:#004d4d,stroke:#333,stroke-width:2px
+    class unifi-router router
+
+    classDef vm-eth fill:#00ffff,color:#00f,stroke:#444,stroke-width:1px
+    class vm-ip,annex-vm vm-eth
+
+    classDef vm color:#000,fill:#eee,stroke:#000,stroke-width:2px
+    class vm-bgp vm
+
+    style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
+
+    style Annex color:#000,fill:#000,stroke:#333,stroke-width:2px
+
+    style External color:#000,fill:#fff,stroke:#333,stroke-width:0px
+    style Annex color:#000,fill:#fff,stroke:#333,stroke-width:0px
+    style OVN color:#aaa,fill:#fff,stroke:#333,stroke-width:0px
+
+    classDef namespace color:#000,fill:#fff,stroke:#000,stroke-width:2px
+    class ns-bgp namespace
+```
