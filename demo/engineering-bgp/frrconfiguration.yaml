@@ -1,0 +1,28 @@
+---
+apiVersion: frrk8s.metallb.io/v1beta1
+kind: FRRConfiguration
+metadata:
+  labels:
+    name: engineering
+  name: engineering
+  # must go to this namespace
+  namespace: openshift-frr-k8s
+spec:
+  bgp:
+    routers:
+      # Engineering's ASN
+      # TODO, can we create more than one router with different ASNs?
+      - asn: 65002
+        neighbors:
+          # External router
+          - address: 192.168.4.2
+            asn: 65021
+            disableMP: true
+            dualStackAddressFamily: false
+            toAdvertise:
+              allowed:
+                mode: all
+
+# show generated config
+# oc -n openshift-frr-k8s -c frr rsh frr-k8s-552nn vtysh -c 'sh run'
+# why am i missing a prefix list for 10.10.240.0/23?

@@ -1,0 +1,25 @@
+---
+apiVersion: k8s.ovn.org/v1
+kind: RouteAdvertisements
+metadata:
+  name: engineering
+spec:
+  # select all nodes for advertising primary CUDNs
+  nodeSelector: {}
+
+  advertisements:
+    - PodNetwork
+
+  frrConfigurationSelector:
+    matchLabels:
+      name: engineering
+
+  networkSelectors:
+    - networkSelectionType: ClusterUserDefinedNetworks
+      clusterUserDefinedNetworkSelector:
+        networkSelector:
+          matchExpressions:
+            - key: bewley.net/dept
+              operator: In
+              values:
+                - "engineering"
