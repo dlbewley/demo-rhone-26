@@ -89,19 +89,25 @@ p
 
 NODE_NAME=$(oc get pod -o jsonpath='{.items[0].spec.nodeName}' -l vm.kubevirt.io/name=vm-primary-udn -n $NAMESPACE)
 
-p "# 👀 Every node has the same IP on the layer2 which acts as the default gateway for pods"
+p "# 👀 Every node has the same IP on the layer2 UDN"
 pei "oc debug node/$NODE_NAME -- ip -br -4 -c a 2>/dev/null"
 p
 p
 
 clear
 figlet -w 100 'OVN' | lolcat -p 1
-p "# 🛜 for the UDN there is a layer2 switch in OVN"
-pei "ovncli $NODE_NAME ovn-nbctl ls-list | grep vm.primary.udn"
-p "# 🛜 and there is a gateway router"
+DOTTED_NAMESPACE=$(echo $NAMESPACE | sed 's/-/./g')
+p "# 🛜 OVN creates a layer2 switch named after the namespace and the UDN"
+pei "ovncli $NODE_NAME ovn-nbctl ls-list | grep ${DOTTED_NAMESPACE}"
+p "# 🛜 And a gateway router is created to exit the UDN"
 pei "ovncli $NODE_NAME ovn-nbctl lr-list"
-p "# 🛜 and the gateway router enables NAT to egress the UDN"
-pei "ovncli $NODE_NAME ovn-nbctl show GR_demo.vm.primary.udn_primary.udn_${NODE_NAME}"
+p "# 🛜 The UDN gateway router defines NAT to egress the UDN"
+pei "ovncli $NODE_NAME ovn-nbctl show GR_${DOTTED_NAMESPACE}_primary.udn_${NODE_NAME}"
+p
+clear
+#p "# 🛜 And the node gateway router defines the second NAT to egress the node"
+#pei "ovncli $NODE_NAME ovn-nbctl show GR_${NODE_NAME}"
+
 
 p "# 🧹 Cleanup"
 if [[ "${RUN_CLEANUP:-false}" == "true" ]]; then
