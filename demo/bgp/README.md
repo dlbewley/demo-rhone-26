@@ -94,6 +94,10 @@ oc patch network.operator cluster --type merge --patch \
 	}'
 ```
 
+## Peer Router
+
+Using a Unifi UDM Pro and [this configuration](unifi-frr.conf).
+
 ## Deployment
 
 Apply the kustomization:
