@@ -5,14 +5,14 @@ This directory contains Kubernetes manifests for deploying a VirtualMachine that
 ## Overview
 
 This demo demonstrates how to:
-- Create a UserDefinedNetwork with Layer2 topology and Primary role
-- Configure a VirtualMachine to use the Primary UDN as its default network
+- Create a UserDefinedNetwork with Layer2 topology and Primary role enabling isolation and persistent IP addressing
 - Set up a namespace-scoped network that becomes the default route for pods in that namespace
+- Configure a VirtualMachine to use this Primary UDN as its default network
 
 ## Demo
 ### Recorded Demo
 
-[![asciicast](https://asciinema.org/a/767661.svg?poster=npt:0:07)](https://asciinema.org/a/767661)
+[![asciicast](https://asciinema.org/a/769788.svg?poster=npt:0:07)](https://asciinema.org/a/769788)
 
 ### Interactive Demo Script
 
