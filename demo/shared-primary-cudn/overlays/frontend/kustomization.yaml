@@ -4,6 +4,11 @@ kind: Kustomization
 
 namespace: demo-engr-frontend
 
+labels:
+  - pairs:
+      bewley.net/team: frontend
+    includeTemplates: true
+
 resources:
   - ../../base
   - namespace.yaml

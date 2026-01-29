@@ -4,6 +4,8 @@ kind: ClusterUserDefinedNetwork
 metadata:
   name: engineering
   description: "Engineering network is shared by teams in Engineering department."
+  labels:
+    bewley.net/dept: engineering
 spec:
   namespaceSelector:
     matchLabels:

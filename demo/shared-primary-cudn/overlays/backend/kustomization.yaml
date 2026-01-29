@@ -4,6 +4,11 @@ kind: Kustomization
 
 namespace: demo-engr-backend
 
+labels:
+  - pairs:
+      bewley.net/team: backend
+    includeTemplates: true
+
 resources:
   - ../../base
   - namespace.yaml
