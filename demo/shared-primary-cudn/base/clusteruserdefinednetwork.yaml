@@ -1,0 +1,27 @@
+---
+apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  name: engineering
+  description: "Engineering network is shared by teams in Engineering department."
+  labels:
+    bewley.net/dept: engineering
+spec:
+  namespaceSelector:
+    matchLabels:
+      bewley.net/dept: engineering
+# Alternatively:
+#    matchExpressions:
+#      - key: kubernetes.io/metadata.name
+#        operator: In
+#        values:
+#          - demo-engr-backend
+#          - demo-engr-frontend
+  network:
+    topology: Layer2
+    layer2:
+      ipam:
+        lifecycle: Persistent
+      role: Primary
+      subnets:
+        - 10.10.240.0/23

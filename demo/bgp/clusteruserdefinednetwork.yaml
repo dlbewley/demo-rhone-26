@@ -3,17 +3,17 @@ apiVersion: k8s.ovn.org/v1
 kind: ClusterUserDefinedNetwork
 metadata:
   labels:
-    advertise: "true"
-  name: cluster-udn-001
+    export-as: "65002"
+  name: cudn-10-65-0-0-24
 spec:
   namespaceSelector:
     matchLabels:
-      jinkit-udn: "001"
+      cudn-10-65-0-0-24: "true"
   network:
     layer2:
       ipam:
         lifecycle: Persistent
       role: Primary
       subnets:
-      - 10.60.0.0/22
+      - 10.65.0.0/24
     topology: Layer2

@@ -1,0 +1,22 @@
+# https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/advanced_networking/route-advertisements#nw-route-advertisements-setup_example-route-advertisements-setup
+---
+apiVersion: k8s.ovn.org/v1
+kind: RouteAdvertisements
+metadata:
+  name: default
+spec:
+  nodeSelector: {}
+
+  advertisements:
+    - PodNetwork
+
+  frrConfigurationSelector:
+    matchLabels:
+      export-as: "65002"
+
+  networkSelectors:
+    - networkSelectionType: ClusterUserDefinedNetworks
+      clusterUserDefinedNetworkSelector:
+        networkSelector:
+          matchLabels:
+            export-as: "65002"
