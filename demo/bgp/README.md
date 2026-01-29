@@ -1,60 +1,54 @@
 # BGP Route Advertisement with FRR
 
-This directory contains Kubernetes manifests for demonstrating BGP route advertisement from ClusterUserDefinedNetworks to external routers using FRR (Free Range Routing).
+This directory contains Kubernetes manifests for demonstrating BGP route advertisement from ClusterUserDefinedNetworks to external routers using FRR-K8s (Free Range Routing Kubernetes).
 
 ## Overview
 
 This demo demonstrates how to:
 - Configure BGP peering between the cluster and an external router using FRR
 - Advertise ClusterUserDefinedNetwork routes via BGP
-- Use static IP addressing for VirtualMachines with route advertisement
 - Set up RouteAdvertisements to control which networks are advertised
 
 ## Components
 
 ### ClusterUserDefinedNetwork
 
-The `clusteruserdefinednetwork.yaml` defines a CUDN named `cluster-udn-001` with:
+The `[clusteruserdefinednetwork.yaml](clusteruserdefinednetwork.yaml)` defines a CUDN named `cudn-10-65-0-0-24` with:
 - **Topology**: Layer2
 - **Role**: Primary
 - **Subnet**: `10.65.0.0/24`
 - **IPAM Lifecycle**: Persistent
-- **Label**: `advertise: "true"` (used by RouteAdvertisements to select this network)
-- **Namespace Selector**: Creates NetworkAttachmentDefinition in namespaces with label `export-as: "65002"`
+- **Label**: `export-as: "65002"` (used by RouteAdvertisements to select this network)
+- **Namespace Selector**: Creates NetworkAttachmentDefinition in namespaces with label `cudn-10-65-0-0-24: "true"`
 
 ### FRRConfiguration
 
-The `frrconfiguration.yaml` configures BGP peering:
+The `[frrconfiguration.yaml](frrconfiguration.yaml)` configures BGP peering:
 - **BGP ASN**: 65002 (cluster side)
 - **Neighbor**: 192.168.4.1 (external router)
 - **Neighbor ASN**: 65001
 - **Advertisement Mode**: All (advertises all allowed routes)
-- **Label**: `advertise: "true"` (used by RouteAdvertisements to select this FRR config)
+- **Label**: `export-as: "65002"` (used by RouteAdvertisements to select this FRR config)
 - **Namespace**: `openshift-frr-k8s` (FRR operator namespace)
 
 ### RouteAdvertisements
 
-The `routeradvertisements.yaml` configures which networks to advertise:
+The `[routeadvertisements.yaml](routeadvertisements.yaml)` configures which networks to advertise:
 - **PodNetwork**: Advertises pod network routes
-- **CUDN Selector**: Selects CUDNs with label `advertise: "true"`
-- **FRR Config Selector**: Uses FRRConfiguration with label `advertise: "true"`
+- **CUDN Selector**: Selects CUDNs with label `export-as: "65002"`
+- **FRR Config Selector**: Uses FRRConfiguration with label `export-as: "65002"`
 - **Node Selector**: Empty (applies to all nodes)
-
-**Note**: This resource is available in OpenShift 4.21+.
 
 ### VirtualMachine
 
-The `virtualmachine.yaml` defines a Fedora VM with:
-- **Static IP**: `10.60.0.60` (configured via annotation `network.kubevirt.io/addresses`)
-- **Interface**: Uses l2bridge binding to connect to the Primary UDN
+The `virtualmachine.yaml` defines a VM with:
+- **Interface**: Uses l2bridge binding to connect to the Primary UDN when patched by [kustomize](kustomization.yaml)
 - **Namespace**: `demo-cudn-bgp` (matches the CUDN namespace selector)
-
-**Note**: Static IP addressing via annotation requires OpenShift 4.21+.
 
 ### Namespace
 
 The `namespace.yaml` creates the `demo-cudn-bgp` namespace with:
-- **Label**: `export-as: "65002"` (matches CUDN namespace selector)
+- **Label**: `cudn-10-65-0-0-24: "true"` (matches CUDN namespace selector)
 - **Label**: `k8s.ovn.org/primary-user-defined-network: ""` (required for Primary UDN)
 
 ## Prereqs
@@ -77,7 +71,7 @@ oc patch network.operator cluster --type merge --patch \
 }'
 ```
 
-- Optional for use cases I'm not familiar with yet
+- Optional for use cases including VRF-lite
 
 ```bash
 oc patch network.operator cluster --type merge --patch \
@@ -94,10 +88,6 @@ oc patch network.operator cluster --type merge --patch \
 	}'
 ```
 
-## Peer Router
-
-Using a Unifi UDM Pro and [this configuration](unifi-frr.conf).
-
 ## Deployment
 
 Apply the kustomization:
@@ -110,7 +100,7 @@ kubectl apply -k demo/bgp
 
 1. **CUDN Creation**: The ClusterUserDefinedNetwork creates a Primary UDN in the namespace
 2. **VM Static IP**: The VM receives the static IP `10.65.0.60` from the `10.65.0.0/24` subnet
-3. **Route Advertisement**: RouteAdvertisements selects the CUDN (via `advertise: "true"` label) and the FRRConfiguration
+3. **Route Advertisement**: RouteAdvertisements selects the CUDN (via `export-as: "65002"` label) and the FRRConfiguration
 4. **BGP Peering**: FRR establishes BGP session with external router at `192.168.4.1`
 5. **Route Propagation**: The `10.65.0.0/24` route is advertised to the external router via BGP
 
@@ -123,31 +113,14 @@ Update the FRRConfiguration to match your environment:
 - **ASN**: Update ASNs (65001/65002) to match your BGP configuration
 - **Advertisement Mode**: Adjust `toAdvertise.allowed.mode` if you need more granular control
 
-### Static IP Assignment
-
-The VM uses static IP via annotation:
-```yaml
-annotations:
-  network.kubevirt.io/addresses: '{"eth0": ["10.65.0.60"]}'
-```
-
-Change the IP address in the annotation to assign a different static IP from the subnet.
-
 ### Network Selection
 
 To advertise additional networks:
-1. Add `advertise: "true"` label to the CUDN
+1. Add `export-as: "65002"` label to the CUDN
 2. The RouteAdvertisements resource will automatically select it
 
 To exclude a network from advertisement:
-1. Remove or change the `advertise` label on the CUDN
-
-## Prerequisites
-
-- OpenShift 4.21+ (for RouteAdvertisements and static IP annotations)
-- FRR operator installed in `openshift-frr-k8s` namespace
-- External BGP router configured to peer with the cluster
-- Physical networking configured (if using localnet CUDNs)
+1. Remove or change the label on the CUDN
 
 ## Verification
 
@@ -175,6 +148,7 @@ To exclude a network from advertisement:
    ```bash
    kubectl get vm fedora-static-cudn-01 -n demo-cudn-bgp -o yaml | grep addresses
    ```
+
 ### OVN
 
 Logical router for a CUDN is named as follows:
@@ -199,7 +173,6 @@ Route Table <main>:
 ## Notes
 
 - The CUDN uses Primary role, making it the default route for pods in the namespace
-- Static IP addressing requires the `network.kubevirt.io/addresses` annotation (4.21+)
 - RouteAdvertisements is a cluster-scoped resource that controls BGP route advertisement
 - FRRConfiguration must be in the `openshift-frr-k8s` namespace
 - Ensure the external router is configured to accept BGP peering from the cluster
@@ -281,8 +254,8 @@ graph LR;
 ### Network Flow
 
 ```mermaid
-graph TD;
-    subgraph Cluster[" "]
+graph LR;
+    subgraph Cluster["Cluster"]
         subgraph ns-bgp["📦 **demo-cudn-bgp** Namespace"]
             subgraph vm-bgp["💻 VirtualMachine"]
                 vm-ip["10.65.0.60<br>🔌 eth0"]
@@ -290,9 +263,13 @@ graph TD;
             cudn-subnet["CUDN<br>🛜 10.65.0.0/24"]
         end
 
-        subgraph OVN["OVN Gateway Router"]
+        subgraph OVN_GW["OVN Gateway Router"]
             ovn-gw["Gateway Router<br>🔀 10.65.0.1"]
         end
+        subgraph OVN_CR["OVN Cluster Router"]
+            ovn-cr["Gateway Router<br>🔀 10.65.0.1"]
+        end
+
     end
 
     subgraph External["External Network"]
@@ -300,7 +277,7 @@ graph TD;
     end
 
     subgraph Annex["The Annex"]
-        annex-vm["VirtualMachine<br>💻 10.254.254.252"]
+        annex-vm["VM<br>💻 10.254.254.252"]
     end
 
     vm-ip ---> cudn-subnet
@@ -320,7 +297,7 @@ graph TD;
     class cudn-subnet cudn
 
     classDef ovn fill:#9ad8d8,color:#fff,stroke:#333,stroke-width:2px
-    class ovn-gw ovn
+    class ovn-cr,ovn-gw ovn
 
     classDef router fill:#daf2f2,color:#004d4d,stroke:#333,stroke-width:2px
     class unifi-router router
@@ -331,13 +308,13 @@ graph TD;
     classDef vm color:#000,fill:#eee,stroke:#000,stroke-width:2px
     class vm-bgp vm
 
-    style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:0px
+    style Cluster color:#000,fill:#fff,stroke:#333,stroke-width:1px
 
-    style Annex color:#000,fill:#000,stroke:#333,stroke-width:2px
+    style Annex color:#000,fill:#fff,stroke:#333,stroke-width:1px
 
     style External color:#000,fill:#fff,stroke:#333,stroke-width:0px
-    style Annex color:#000,fill:#fff,stroke:#333,stroke-width:0px
-    style OVN color:#aaa,fill:#fff,stroke:#333,stroke-width:0px
+    classDef OVN color:#aaa,fill:#fff,stroke:#333,stroke-width:0px
+    class OVN_CR,OVN_GW OVN
 
     classDef namespace color:#000,fill:#fff,stroke:#000,stroke-width:2px
     class ns-bgp namespace
