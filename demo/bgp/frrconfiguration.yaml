@@ -21,3 +21,8 @@ spec:
         toAdvertise:
           allowed:
             mode: all
+        toReceive:
+          allowed:
+            mode: filtered
+            prefixes:
+              - prefix: 10.254.254.0/24
