@@ -96,15 +96,6 @@ Apply the kustomization:
 kubectl apply -k demo/bgp
 ```
 
-### Deployment Flow
-
-1. **Namespace Creation**: The Namespace is created with label in place allowing for replacement of primary network
-1. **CUDN Creation**: The ClusterUserDefinedNetwork creates a Primary UDN in the namespace with subnet `10.65.0.0/24`
-1. **Route Advertisement**: A `RouteAdvertisements` is created which selects the CUDN (via `export-as: "65002"` label) and the `FRRConfiguration` (via `export-as: "65002"` label)
-1. **FRR Configuration**: A `FRRConfiguration` resource is generated for each node from the selected templates.
-1. **BGP Peering**: FRR using above configuration establishes BGP session with external router at `192.168.4.1` using
-1. **Route Propagation**: The `10.65.0.0/24` route is advertised to the external router via BGP
-
 ## Configuration
 
 ### BGP Peering
@@ -179,6 +170,15 @@ Route Table <main>:
 - Ensure the external router is configured to accept BGP peering from the cluster
 
 ## Demo
+### Deployment Flow
+
+1. **Namespace Creation**: The Namespace _demo-cudn-bgp_ is created with label in place allowing for replacement of primary network
+1. **CUDN Creation**: The `ClusterUserDefinedNetwork` _cudn-10-65-0-0-24_ creates a Primary UDN NAD in the namespace with subnet `10.65.0.0/24`
+1. **Route Advertisement**: A `RouteAdvertisements` is created which selects the CUDN (via `export-as: "65002"` label) and the `FRRConfiguration` (via `export-as: "65002"` label)
+1. **FRR Configuration**: Selected `FRRConfiguration` resources are interpolated to generated a FRRConfiguration for each node and applied via `DaemonSet`.
+1. **BGP Peering**: FRR using above configuration establishes a BGP session with external router at `192.168.4.1` using
+1. **Route Propagation**: The `10.65.0.0/24` route is advertised to the external router via BGP
+1. **CUDN Ingress**: Clients on other side of peer router may now reach 10.65.0.0/24 directly, provided a return route is also known to the VRF.
 
 ```mermaid
 graph LR;
@@ -189,14 +189,14 @@ graph LR;
       end
 
       subgraph Project["Project Scoped"]
-          subgraph ns-bgp["📦 **demo-cudn-bgp** Namespace"]
+          subgraph ns-bgp["📦 **demo-cudn-bgp**<br>Namespace"]
               label-ns("🏷️ cudn-10-65-0-0-24: true"):::labels
               nad-bgp[NAD<br> 🛜 cudn-10-65-0-0-24]
               subgraph vm-bgp["💻 VirtualMachine"]
-                  vm-eth0[eth0 🔌]
+                  vm-eth0[10.65.0.9<br>eth0 🔌]
               end
           end
-          subgraph ns-frr["📦 **openshift-frr-k8s** Namespace"]
+          subgraph ns-frr["📦 **openshift-frr-k8s**<br>Namespace"]
               frr-unifi["FRRConfiguration<br> 🔀 unifi-router<br> 🏷️ export-as: 65002"]
               frr-ds["FRR DaemonSet<br> 🔄 BGP Router<br>ASN: 65002"]
           end
@@ -212,7 +212,7 @@ graph LR;
     ra-default -.<b>clusterUserDefinedNetworkSelector</b><ul><li>export-as: 65002</li></ul>.-> cudn-1065
 
     frr-unifi --configures--> frr-ds
-    frr-ds <-->|BGP peering| unifi-router
+    frr-ds <-->|BGP peers| unifi-router
 
     linkStyle 0,1 stroke:#007799,stroke-width:2px,stroke-dasharray: 5 5;
     linkStyle 2,3 stroke:#c96,stroke-width:2px;
@@ -261,7 +261,8 @@ graph LR;
 ```
 
 ### Network Flow
-
+> [!WARNING]
+> **Ignore, WIP**
 ```mermaid
 graph LR;
     subgraph Cluster["Cluster"]
